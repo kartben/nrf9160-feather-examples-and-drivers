@@ -1,14 +1,27 @@
 name: Build
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ "v2.2.x" ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "v2.2.x" ]
+  schedule:
+    - cron: '45 12 * * 6'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
     container: zephyrprojectrtos/ci:v0.24.8
     env:
       CMAKE_PREFIX_PATH: /opt/toolchains
     strategy:
+      fail-fast: false
       matrix:
         sample: [accelerometer, active_sleep, at_client, battery, blinky, bme280, button, deep_sleep, external_flash, external_rtc, external_rtc_time_sync, led_pwm, mfw_update, nanopb, sms]
         target: [circuitdojo_feather_nrf9160_ns]
